@@ -49,7 +49,7 @@ photo-frame-appliance/
 1. **Clone the repository**:
 
 ```bash
-git clone https://github.com/yourusername/photo-frame-appliance.git
+git clone https://github.com/jhandfield/photo-frame-appliance.git
 cd photo-frame-appliance
 ```
 
@@ -136,6 +136,18 @@ journalctl -u slideshow.service
 journalctl -u photos-watch.service
 journalctl -u slideshow-error.service
 ```
+
+---
+
+## AI Disclaimer
+
+This software was written utilizing the following tools:
+* ChatGPT (GPT-5 model, December 2025)
+* GitHub Copilot:
+  * GPT-5.1-Codex-Max model, December 2025
+  * Claude Haiku 4.5 model, December 2025
+
+All suggestions were human-reviewed and tested.
 
 ---
 
