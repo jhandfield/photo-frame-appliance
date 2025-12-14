@@ -1,0 +1,13 @@
+[Unit]
+Description=Watch /photos for new files and restart slideshow
+After=slideshow.service
+Requires=slideshow.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/photos-watch.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

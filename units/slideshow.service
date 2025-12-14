@@ -1,0 +1,27 @@
+[Unit]
+Description=Picture Frame Slideshow
+After=local-fs.target systemd-user-sessions.service dev-fb0.device
+Conflicts=getty@tty1.service
+OnFailure=slideshow-error.service
+
+[Service]
+User=jhandfield
+Group=video
+ExecStart=/usr/local/bin/start-slideshow.sh
+Restart=always
+RestartSec=2
+
+StandardInput=tty
+StandardOutput=tty
+StandardError=tty
+
+TTYPath=/dev/tty1
+TTYReset=yes
+TTYVHangup=yes
+TTYVTDisallocate=yes
+
+StartLimitBurst=10
+StartLimitIntervalSec=120
+
+[Install]
+WantedBy=multi-user.target
