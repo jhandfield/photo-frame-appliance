@@ -8,7 +8,7 @@ fi
 
 echo "Installing dependencies..."
 apt update
-apt install -y fbi psmisc inotify-tools
+apt install -y fbi psmisc inotify-tools imagemagick
 
 echo "Creating directories..."
 mkdir -p /photos /boot/splash /usr/local/bin

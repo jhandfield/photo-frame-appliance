@@ -3,7 +3,7 @@ set -euo pipefail
 
 usage() {
   echo "Usage: $0 [--remove-apt-packages]"
-  echo "  --remove-apt-packages  Purge fbi, psmisc, inotify-tools and autoremove dependencies"
+  echo "  --remove-apt-packages  Purge fbi, psmisc, inotify-tools, imagemagick and autoremove dependencies"
   exit 1
 }
 
@@ -81,7 +81,7 @@ done
 
 if $REMOVE_APT_PACKAGES; then
   echo "Removing apt packages and dependencies..."
-  apt remove --purge -y fbi psmisc inotify-tools
+  apt remove --purge -y fbi psmisc inotify-tools imagemagick
   apt autoremove --purge -y
 else
   echo "Leaving apt packages installed. Re-run with --remove-apt-packages to purge them."

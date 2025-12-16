@@ -1,4 +1,5 @@
 #!/bin/bash
+# Start a slideshow of images in the /photos directory using fbi.
 
 # Wait for photos to be available
 while ! ls /photos/* >/dev/null 2>&1; do

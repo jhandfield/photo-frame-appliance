@@ -1,4 +1,5 @@
 #!/bin/sh
+# Show an error image on the framebuffer indicating a problem. Invoked by slideshow.service on failure.
 
 # Determine which error image to show based on time of day
 HOUR=$(date +"%H")
