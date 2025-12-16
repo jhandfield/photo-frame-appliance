@@ -21,7 +21,8 @@ echo "Copying scripts..."
 cp scripts/photos-watch.sh /usr/local/bin/photos-watch.sh
 cp scripts/show-error-image.sh /usr/local/bin/show-error-image.sh
 cp scripts/start-slideshow.sh /usr/local/bin/start-slideshow.sh
-chmod +x /usr/local/bin/photos-watch.sh /usr/local/bin/show-error-image.sh /usr/local/bin/start-slideshow.sh
+cp scripts/photos-convert.sh /usr/local/bin/photos-convert.sh
+chmod +x /usr/local/bin/photos-watch.sh /usr/local/bin/show-error-image.sh /usr/local/bin/start-slideshow.sh /usr/local/bin/photos-convert.sh
 
 echo "Copying systemd unit files..."
 cp units/*.service /etc/systemd/system/
@@ -43,11 +44,48 @@ if [ -f splash/error-night.png ]; then
   chmod 644 /boot/splash/error-night.png
 fi
 
+# Disable getty on tty1 to prevent interference with fbi
+echo "Disabling getty on tty1..."
+systemctl disable getty@tty1.service
+
+# Locate the correct config.txt path
+if [ -f /boot/firmware/config.txt ]; then
+  CONFIG_TXT="/boot/firmware/config.txt"
+elif [ -f /boot/config.txt ]; then
+  CONFIG_TXT="/boot/config.txt"
+else
+  CONFIG_TXT=""
+fi
+
+# Check if the console= we want is already present
+if grep -q "^console=tty3 quiet loglevel=3 vt.global_cursor_default=0" "$CONFIG_TXT"; then
+  echo "Console line found in config.txt; skipping modification."
+  SKIP_CONSOLE_LINE=true
+elif grep -q "^console=" "$CONFIG_TXT"; then
+  if [ "$SKIP_CONSOLE_LINE" != "true" ]; then
+    echo "Commenting existing console line..."
+    sed -i 's|^console=.*|#&|' "$CONFIG_TXT"
+  fi
+fi
+
+# Add console= line to config.txt if not skipped
+if [ "$SKIP_CONSOLE_LINE" != "true" ]; then
+  echo "Adding console line to config.txt..."
+  echo "console=tty3 quiet loglevel=3 vt.global_cursor_default=0" >> "$CONFIG_TXT"
+fi
+
 # Enable and start services
 echo "Enabling and starting services..."
 systemctl daemon-reload
-systemctl enable slideshow.service photos-watch.service slideshow-error.service
-systemctl start slideshow.service photos-watch.service
+systemctl enable slideshow.service photos-watch.service photos-convert.service
+systemctl start slideshow.service photos-watch.service photos-convert.service
 
-echo "Installation complete."
-echo "Add images to /photos and reboot to test."
+# Final message and reboot prompt
+echo "Installation complete, rebooting is recommended. Reboot now? (y/N)"
+read -r response
+if [[ "$response" =~ ^[Yy]$ ]]; then
+  echo "Rebooting..."
+  reboot
+else
+  echo "Please remember to reboot later to apply all changes."
+fi

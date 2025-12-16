@@ -13,10 +13,11 @@ Designed to be minimal, reliable, and easy to set up.
 ## Features
 
 * Fullscreen slideshow using the framebuffer (`fbi`)
-* Automatic restart on new images (debounced)
+* Automatic restart on new images (debounced to avoid disruptions on bulk uploads)
+* Automatic HEIC to JPEG conversion (runs independently without debouncing)
 * Failure handling with a static error image
 * Compatible with Raspberry Pi OS and Ubuntu Server and other Debian-based systems
-* Minimal dependencies (`fbi`, `psmisc`, `inotify-tools`)
+* Minimal dependencies (`fbi`, `psmisc`, `inotify-tools`, `imagemagick`)
 
 ---
 
@@ -27,12 +28,14 @@ photo-frame-appliance/
 ├── install.sh                 # Installer script
 ├── uninstall.sh               # Uninstaller script
 ├── scripts/
-│   ├── photos-watch.sh        # Watches /photos for new images
+│   ├── photos-watch.sh        # Watches /photos for new images and restarts slideshow
+│   ├── photos-convert.sh      # Converts unsupported formats (HEIC) to JPEG
 │   └── show-error-image.sh    # Displays error image if slideshow fails
 │   └── start-slideshow.sh     # Starts the slideshow
 ├── units/
 │   ├── slideshow.service
 │   ├── photos-watch.service
+│   ├── photos-convert.service # Runs photos-convert.sh continuously
 │   └── slideshow-error.service
 │   └── boot-splash.service    # Optional boot splash (coming soon)
 ├── splash/
@@ -77,7 +80,9 @@ sudo cp ~/my-photos/*.jpg /photos/
 sudo chmod 644 /photos/*.jpg
 ```
 
-2. The slideshow will automatically start on boot, and **restart whenever new images are added** (30 seconds after the last file is added, to reduce disruptions if you're uploading a large batch of images at once).
+2. The slideshow will automatically start on boot, and **restart whenever new images are added** (debounced by 30 seconds to reduce disruptions if you're uploading a large batch of images at once).
+
+3. **HEIC files are automatically converted to JPEG** by the `photos-convert` service. The service runs continuously and converts all `.heic` and `.HEIC` files found in `/photos` to `.jpg` format. Original HEIC files are preserved to support tools like rsync for syncing external sources.
 
 ---
 

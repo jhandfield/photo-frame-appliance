@@ -29,7 +29,7 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-services=(slideshow.service photos-watch.service slideshow-error.service)
+services=(slideshow.service photos-watch.service photos-convert.service slideshow-error.service)
 scripts=(/usr/local/bin/photos-watch.sh /usr/local/bin/show-error-image.sh /usr/local/bin/slideshow.sh)
 images=(/boot/splash/splash.png /boot/splash/error-day.png /boot/splash/error-night.png)
 unit_dir=/etc/systemd/system
@@ -56,6 +56,27 @@ for srv in "${services[@]}"; do
     rm -f "$unit_path"
   fi
 done
+
+# Re-enable getty on tty1
+echo "Re-enabling getty on tty1..."
+systemctl enable getty@tty1.service
+
+# Locate the correct config.txt path
+if [ -f /boot/firmware/config.txt ]; then
+  CONFIG_TXT="/boot/firmware/config.txt"
+elif [ -f /boot/config.txt ]; then
+  CONFIG_TXT="/boot/config.txt"
+else
+  CONFIG_TXT=""
+fi
+
+# Remove the console line we added during install
+sed -i 's|^console=tty3 quiet loglevel=3 vt.global_cursor_default=0||' "$CONFIG_TXT"
+
+# Uncomment any previously commented console= lines
+sed -i 's|^#console=.*|console=&|' "$CONFIG_TXT"
+
+# Reload systemd daemon to apply changes
 systemctl daemon-reload
 
 echo "Removing scripts..."
@@ -87,4 +108,12 @@ else
   echo "Leaving apt packages installed. Re-run with --remove-apt-packages to purge them."
 fi
 
-echo "Uninstall complete. User content in /photos (if any) was preserved."
+echo "Uninstall complete. User content in /photos (if any) was preserved. Rebooting is recommended; reboot now? (y/N)"
+
+read -r response
+if [[ "$response" =~ ^[Yy]$ ]]; then
+  echo "Rebooting..."
+  reboot
+else
+  echo "Please remember to reboot later to apply all changes."
+fi

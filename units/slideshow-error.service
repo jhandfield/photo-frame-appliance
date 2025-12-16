@@ -13,4 +13,4 @@ StandardError=tty
 Restart=no
 
 [Install]
-WantedBy=multi-user.target
+# No WantedBy - this service is only triggered by OnFailure from slideshow.service
