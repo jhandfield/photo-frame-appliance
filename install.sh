@@ -95,13 +95,16 @@ fi
 echo "Disabling getty on tty1..."
 systemctl disable getty@tty1.service
 
-# Locate the correct config.txt path
+# Locate the correct config.txt path and boot partition
 if [ -f /boot/firmware/config.txt ]; then
   CONFIG_TXT="/boot/firmware/config.txt"
+  BOOT_PARTITION="/boot/firmware"
 elif [ -f /boot/config.txt ]; then
   CONFIG_TXT="/boot/config.txt"
+  BOOT_PARTITION="/boot"
 else
   CONFIG_TXT=""
+  BOOT_PARTITION=""
 fi
 
 # Check if the console= we want is already present
@@ -124,7 +127,7 @@ fi
 # Enable and start services
 echo "Enabling and starting services..."
 systemctl daemon-reload
-systemctl enable slideshow.service photos-watch.service photos-convert.service
+systemctl enable slideshow.service photos-watch.service photos-convert.service boot-splash.service
 systemctl start slideshow.service photos-watch.service photos-convert.service
 
 # Configure daily poweroff if enabled

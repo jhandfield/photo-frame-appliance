@@ -1,0 +1,19 @@
+[Unit]
+Description=Boot Splash Screen
+DefaultDependencies=no
+After=local-fs.target dev-fb0.device
+Before=slideshow.service
+Conflicts=getty@tty1.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/fbi -T 1 -noverbose -a /boot/splash/splash.png
+StandardInput=tty
+StandardOutput=tty
+StandardError=journal
+
+TTYPath=/dev/tty1
+
+[Install]
+WantedBy=multi-user.target

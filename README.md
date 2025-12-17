@@ -12,6 +12,7 @@ Designed to be minimal, reliable, and easy to set up.
 
 ## Features
 
+* Firmware boot splash for Raspberry Pi (displays immediately on power-on)
 * Fullscreen slideshow using the framebuffer (`fbi`)
 * Automatic restart on new images (debounced to avoid disruptions on bulk uploads)
 * Automatic HEIC to JPEG conversion (runs independently without debouncing)
@@ -26,21 +27,21 @@ Designed to be minimal, reliable, and easy to set up.
 
 ```
 photo-frame-appliance/
-├── install.sh                 # Installer script
-├── uninstall.sh               # Uninstaller script
+├── install.sh                  # Installer script
+├── uninstall.sh                # Uninstaller script
 ├── scripts/
-│   ├── photos-watch.sh        # Watches /photos for new images and restarts slideshow
-│   ├── photos-convert.sh      # Converts unsupported formats (HEIC) to JPEG
-│   └── show-error-image.sh    # Displays error image if slideshow fails
-│   └── start-slideshow.sh     # Starts the slideshow
+│   ├── photos-watch.sh         # Watches /photos for new images and restarts slideshow
+│   ├── photos-convert.sh       # Converts unsupported formats (HEIC) to JPEG
+│   └── show-error-image.sh     # Displays error image if slideshow fails
+│   └── start-slideshow.sh      # Starts the slideshow
 ├── units/
-│   ├── slideshow.service
-│   ├── photos-watch.service
-│   ├── photos-convert.service # Runs photos-convert.sh continuously
-│   └── slideshow-error.service
-│   └── boot-splash.service    # Optional boot splash (coming soon)
+│   ├── slideshow.service       # Main slideshow service
+│   ├── boot-splash.service     # Early boot splash screen
+│   ├── photos-watch.service    # Change monitor for the photos folder
+│   ├── photos-convert.service  # Runs photos-convert.sh continuously
+│   └── slideshow-error.service # Displays a static error image when the slideshow service fails
 ├── splash/
-│   └── splash.png             # Optional default splash image
+│   └── splash.png             # Boot splash image (any resolution)
 │   └── error-day.png          # Static error image, displayed during the day (6am-6pm system time)
 │   └── error-night.png        # Static error image, displayed at night (6pm-6am system time)
 └── README.md
@@ -104,18 +105,26 @@ chmod 644 ~/Pictures/*.jpg
 
 ---
 
-## Optional Boot Splash (not yet implemented)
+## Boot Splash
 
-To enable a custom boot splash before the slideshow:
+The installer configures a boot splash service that displays a splash image early in the boot process using `fbi`. The splash appears as soon as the framebuffer is available and remains visible until the main slideshow starts.
 
-1. Place a splash image in `/boot/splash/splash.jpg`
-2. Enable the boot splash service:
+**Requirements:**
+* `splash/splash.png` in the repository (can be any resolution)
+* The image will be auto-scaled by `fbi` to fit your display
 
-```bash
-sudo systemctl enable boot-splash.service
-```
+**What happens during install:**
+1. `boot-splash.service` is installed and enabled
+2. The service displays `/boot/splash/splash.png` on tty1
+3. When the main slideshow starts, it takes over the display
 
-> Note: On Raspberry Pi, this will display a static image before the slideshow starts. On other systems, ensure `/dev/fb0` exists.
+**To customize the boot splash:**
+1. Replace `splash/splash.png` with your own image (any size)
+2. Re-run the installer, or manually copy it:
+   ```bash
+   sudo cp your-image.png /boot/splash/splash.png
+   sudo systemctl restart boot-splash.service
+   ```
 
 ---
 

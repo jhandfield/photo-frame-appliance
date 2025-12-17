@@ -29,7 +29,7 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-services=(slideshow.service photos-watch.service photos-convert.service slideshow-error.service)
+services=(slideshow.service photos-watch.service photos-convert.service slideshow-error.service boot-splash.service)
 scripts=(/usr/local/bin/photos-watch.sh /usr/local/bin/show-error-image.sh /usr/local/bin/slideshow.sh)
 images=(/boot/splash/splash.png /boot/splash/error-day.png /boot/splash/error-night.png)
 unit_dir=/etc/systemd/system
@@ -61,13 +61,16 @@ done
 echo "Re-enabling getty on tty1..."
 systemctl enable getty@tty1.service
 
-# Locate the correct config.txt path
+# Locate the correct config.txt path and boot partition
 if [ -f /boot/firmware/config.txt ]; then
   CONFIG_TXT="/boot/firmware/config.txt"
+  BOOT_PARTITION="/boot/firmware"
 elif [ -f /boot/config.txt ]; then
   CONFIG_TXT="/boot/config.txt"
+  BOOT_PARTITION="/boot"
 else
   CONFIG_TXT=""
+  BOOT_PARTITION=""
 fi
 
 # Remove the console line we added during install
