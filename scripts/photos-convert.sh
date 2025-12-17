@@ -1,7 +1,7 @@
 #!/bin/sh
 # Convert unsupported image formats to JPEG. Uses inotifywait to trigger on file events without debouncing.
 
-WATCH_DIR="/photos"
+WATCH_DIR="PHOTO_DIR"
 
 # Function to convert a single HEIC file to JPEG
 convert_heic_file() {

@@ -30,7 +30,7 @@ photo-frame-appliance/
 ├── install.sh                  # Installer script
 ├── uninstall.sh                # Uninstaller script
 ├── scripts/
-│   ├── photos-watch.sh         # Watches /photos for new images and restarts slideshow
+│   ├── photos-watch.sh         # Watches photo dir for new images and restarts slideshow
 │   ├── photos-convert.sh       # Converts unsupported formats (HEIC) to JPEG
 │   └── show-error-image.sh     # Displays error image if slideshow fails
 │   └── start-slideshow.sh      # Starts the slideshow
@@ -101,7 +101,7 @@ chmod 644 ~/Pictures/*.jpg
 
 2. The slideshow will automatically start on boot, and **restart whenever new images are added** (debounced by 30 seconds to reduce disruptions if you're uploading a large batch of images at once).
 
-3. **HEIC files are automatically converted to JPEG** by the `photos-convert` service. The service runs continuously and converts all `.heic` and `.HEIC` files found in `/photos` to `.jpg` format. Original HEIC files are preserved to support tools like rsync for syncing external sources.
+3. **HEIC files are automatically converted to JPEG** by the `photos-convert` service. The service runs continuously and converts all `.heic` and `.HEIC` files found in photo dir to `.jpg` format. Original HEIC files are preserved to support tools like rsync for syncing external sources.
 
 ---
 

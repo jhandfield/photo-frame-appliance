@@ -1,7 +1,7 @@
 #!/bin/sh
 # Watch the /photos directory for changes to the photo collection and restart the slideshow service when changes are detected, with debouncing.
 
-WATCH_DIR="/photos"
+WATCH_DIR="PHOTO_DIR"
 DEBOUNCE=30
 
 while true; do

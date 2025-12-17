@@ -30,10 +30,10 @@ while [[ $# -gt 0 ]]; do
 done
 
 services=(slideshow.service photos-watch.service photos-convert.service slideshow-error.service boot-splash.service)
-scripts=(/usr/local/bin/photos-watch.sh /usr/local/bin/show-error-image.sh /usr/local/bin/slideshow.sh)
+scripts=(/usr/local/bin/photos-watch.sh /usr/local/bin/photos-convert.sh /usr/local/bin/show-error-image.sh /usr/local/bin/start-slideshow.sh)
 images=(/boot/splash/splash.png /boot/splash/error-day.png /boot/splash/error-night.png)
 unit_dir=/etc/systemd/system
-dirs_to_clean=(/boot/splash /photos)
+dirs_to_clean=(/boot/splash)
 
 echo "Stopping services..."
 for srv in "${services[@]}"; do

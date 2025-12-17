@@ -57,19 +57,20 @@ chown -R "$RUN_USER:$RUN_GROUP" "$PHOTOS_DIR"
 chmod g+sw "$PHOTOS_DIR"
 
 echo "Copying scripts..."
-cp scripts/photos-watch.sh /usr/local/bin/photos-watch.sh
-cp scripts/show-error-image.sh /usr/local/bin/show-error-image.sh
-cp scripts/photos-convert.sh /usr/local/bin/photos-convert.sh
+# Substitute PHOTOS_DIR in all scripts
+sed "s|PHOTO_DIR|$PHOTOS_DIR|g" scripts/photos-watch.sh > /usr/local/bin/photos-watch.sh
+sed "s|PHOTO_DIR|$PHOTOS_DIR|g" scripts/show-error-image.sh > /usr/local/bin/show-error-image.sh
+sed "s|PHOTO_DIR|$PHOTOS_DIR|g" scripts/photos-convert.sh > /usr/local/bin/photos-convert.sh
+
 # Substitute SLIDESHOW_INTERVAL and PHOTOS_DIR in start-slideshow.sh
-sed -e "s/SLIDESHOW_INTERVAL/$SLIDESHOW_INTERVAL/g" -e "s|/photos|$PHOTOS_DIR|g" scripts/start-slideshow.sh > /usr/local/bin/start-slideshow.sh
+sed -e "s/SLIDESHOW_INTERVAL/$SLIDESHOW_INTERVAL/g" -e "s|PHOTO_DIR|$PHOTOS_DIR|g" scripts/start-slideshow.sh > /usr/local/bin/start-slideshow.sh
 chmod +x /usr/local/bin/photos-watch.sh /usr/local/bin/show-error-image.sh /usr/local/bin/start-slideshow.sh /usr/local/bin/photos-convert.sh
 
 echo "Copying systemd unit files..."
 # Substitute configuration variables in service files
 for service_file in units/*.service; do
   service_name=$(basename "$service_file")
-  sed -e "s|/photos|$PHOTOS_DIR|g" \
-      -e "s|User=.*|User=$RUN_USER|g" \
+  sed -e "s|User=.*|User=$RUN_USER|g" \
       -e "s|Group=.*|Group=$RUN_GROUP|g" \
       "$service_file" > "/etc/systemd/system/$service_name"
 done
