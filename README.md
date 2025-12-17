@@ -2,7 +2,7 @@
 
 A simple, plug-and-play slideshow appliance for Raspberry Pi and other devices.
 
-* Automatically starts a fullscreen slideshow of images in `/photos` on boot
+* Automatically starts a fullscreen slideshow of images in your configured photos directory (default: `~/Pictures`) on boot
 * Watches for new images and restarts the slideshow automatically
 * Shows a static error image if the slideshow repeatedly fails
 
@@ -57,7 +57,23 @@ git clone https://github.com/jhandfield/photo-frame-appliance.git
 cd photo-frame-appliance
 ```
 
-2. **Run the installer as root**:
+2. **(Optional) Customize configuration**:
+
+The installer uses sensible defaults that work for most users. To customize settings:
+
+* Copy `config.sh.example` to `config.sh`
+* Edit the values in `config.sh`
+
+Available settings:
+* `PHOTOS_DIR` - Where photos are stored (default: RUN_USER's `~/Pictures`, e.g., `/home/alice/Pictures`)
+* `SPLASH_DIR` - Where splash/error images are stored (default: `/boot/splash`) **Don't override this unless you really know what you're doing!**
+* `SLIDESHOW_INTERVAL` - Seconds to display each photo (default: `300` = 5 minutes)
+* `RUN_USER` - User to run services as (default: current user)
+* `RUN_GROUP` - Group to run services as (default: current user's group)
+* `AUTO_POWEROFF_ENABLED` - Enable daily automatic poweroff (default: `true`)
+* `AUTO_POWEROFF_TIME` - Time to power off in HH:MM format (default: `22:00`)
+
+3. **Run the installer as root**:
 
 ```bash
 sudo ./install.sh
@@ -65,20 +81,21 @@ sudo ./install.sh
 
 The installer will:
 
-* Install required packages: `fbi`, `psmisc`, `inotify-tools`
-* Create `/photos`, `/boot/splash`, and `/usr/local/bin` directories as required
+* Install required packages: `fbi`, `psmisc`, `inotify-tools`, `imagemagick`
+* Create the photos and splash directories as configured
 * Copy scripts and systemd service units
 * Enable and start the slideshow, slideshow-error, and photo-watch services
+* Configure automatic daily poweroff (if enabled)
 
 ---
 
 ## Adding Images
 
-1. Place your images in `/photos`:
+1. Place your images in your configured directory (default: `/home/<your-user>/Pictures`):
 
 ```bash
-sudo cp ~/my-photos/*.jpg /photos/
-sudo chmod 644 /photos/*.jpg
+cp ~/my-photos/*.jpg ~/Pictures/
+chmod 644 ~/Pictures/*.jpg
 ```
 
 2. The slideshow will automatically start on boot, and **restart whenever new images are added** (debounced by 30 seconds to reduce disruptions if you're uploading a large batch of images at once).
@@ -116,16 +133,14 @@ If you wish to change the error images displayed, replace the files `/boot/splas
 
 ## User & Permissions
 
-**This will be reworked soon**
-
-* All services run as user `jhandfield` in the `video` group by default
-* Make sure the user exists and belongs to `video`:
+* By default, all services run as the user who invoked `sudo ./install.sh`
+* The user must belong to the `video` group to access the framebuffer:
 
 ```bash
-sudo usermod -aG video jhandfield
+sudo usermod -aG video $USER
 ```
 
-* To change the username, edit all service files in `units/` before installation.
+* To customize the user/group, create a `config.sh` file (see Installation section above) and set `RUN_USER` and `RUN_GROUP` before running the installer
 
 ---
 

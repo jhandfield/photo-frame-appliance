@@ -115,7 +115,7 @@ else
   echo "Leaving apt packages installed. Re-run with --remove-apt-packages to purge them."
 fi
 
-echo "Uninstall complete. User content in /photos (if any) was preserved. Rebooting is recommended; reboot now? (y/N)"
+echo "Uninstall complete. User content (if any) was preserved. Rebooting is recommended; reboot now? (y/N)"
 
 read -r response
 if [[ "$response" =~ ^[Yy]$ ]]; then

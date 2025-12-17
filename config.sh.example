@@ -1,0 +1,25 @@
+# Photo Frame Appliance Configuration
+# Copy this file to config.sh and customize as needed
+
+# Directory where photos are stored
+# Default is the Pictures folder of RUN_USER (e.g., /home/alice/Pictures)
+# Uncomment to override:
+# PHOTOS_DIR="/home/youruser/Pictures"
+
+# Directory for splash and error images
+SPLASH_DIR="/boot/splash"
+
+# Seconds to display each photo in the slideshow
+SLIDESHOW_INTERVAL=300
+
+# User to run services as (typically the regular user, not root)
+RUN_USER="$SUDO_USER"
+
+# Group to run services as
+RUN_GROUP="$SUDO_USER"
+
+# Enable automatic daily poweroff
+AUTO_POWEROFF_ENABLED=true
+
+# Time to power off (24-hour format HH:MM)
+AUTO_POWEROFF_TIME="22:00"
