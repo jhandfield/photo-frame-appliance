@@ -80,6 +80,28 @@ systemctl daemon-reload
 systemctl enable slideshow.service photos-watch.service photos-convert.service
 systemctl start slideshow.service photos-watch.service photos-convert.service
 
+# Add daily poweroff cron job at 22:00 local time
+echo "Configuring daily poweroff at 22:00..."
+POWEROFF_BIN="$(command -v poweroff || true)"
+if [ -z "$POWEROFF_BIN" ]; then
+  # Fallback paths commonly used
+  if [ -x /sbin/poweroff ]; then
+    POWEROFF_BIN="/sbin/poweroff"
+  elif [ -x /usr/sbin/poweroff ]; then
+    POWEROFF_BIN="/usr/sbin/poweroff"
+  else
+    echo "Warning: poweroff command not found; skipping cron setup."
+  fi
+fi
+
+if [ -n "$POWEROFF_BIN" ]; then
+  CRON_FILE="/etc/cron.d/photo-frame-poweroff"
+  echo "Creating $CRON_FILE"
+  printf "# Auto poweroff for photo-frame appliance\n" > "$CRON_FILE"
+  printf "0 22 * * * root %s\n" "$POWEROFF_BIN" >> "$CRON_FILE"
+  chmod 644 "$CRON_FILE"
+fi
+
 # Final message and reboot prompt
 echo "Installation complete, rebooting is recommended. Reboot now? (y/N)"
 read -r response

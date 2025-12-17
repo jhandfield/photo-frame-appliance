@@ -79,6 +79,13 @@ sed -i 's|^#console=.*|console=&|' "$CONFIG_TXT"
 # Reload systemd daemon to apply changes
 systemctl daemon-reload
 
+# Remove daily poweroff cron job
+echo "Removing poweroff cron job..."
+CRON_FILE="/etc/cron.d/photo-frame-poweroff"
+if [ -f "$CRON_FILE" ]; then
+  rm -f "$CRON_FILE"
+fi
+
 echo "Removing scripts..."
 for script_path in "${scripts[@]}"; do
   if [ -f "$script_path" ]; then

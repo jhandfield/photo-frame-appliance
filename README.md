@@ -16,6 +16,7 @@ Designed to be minimal, reliable, and easy to set up.
 * Automatic restart on new images (debounced to avoid disruptions on bulk uploads)
 * Automatic HEIC to JPEG conversion (runs independently without debouncing)
 * Failure handling with a static error image
+* Automatic power-off at 10pm (22:00) local time
 * Compatible with Raspberry Pi OS and Ubuntu Server and other Debian-based systems
 * Minimal dependencies (`fbi`, `psmisc`, `inotify-tools`, `imagemagick`)
 
